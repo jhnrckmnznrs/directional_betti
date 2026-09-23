@@ -33,23 +33,23 @@ pip install "directional-betti[io]"
 
 Let each top-dimensional voxel cube have a three-parameter filtration value
 
-\[
+$$
 F(x)=(F_1(x),F_2(x),F_3(x)).
-\]
+$$
 
-For a threshold vector \(t=(t_1,t_2,t_3)\), a top cube is present when
-\(F_j(x)\le t_j\) for all three coordinates. Every lower-dimensional cubical
+For a threshold vector $t=(t_1,t_2,t_3)$, a top cube is present when
+$F_j(x)\le t_j$ for all three coordinates. Every lower-dimensional cubical
 cell receives the coordinatewise minimum of the filtration values of its
 incident top cubes. Thus edges, faces, and vertices can enter before any one
 incident top cube enters.
 
 For every sampled threshold triple the package computes
 
-\[
+$$
 B_q(t)=\dim H_q(K_t;\mathbb F_2),\qquad q=0,1,2,
-\]
+$$
 
-and the Euler characteristic \(\chi(t)\).
+and the Euler characteristic $\chi(t)$.
 
 A minimal example is:
 
@@ -82,82 +82,82 @@ the interval is divided uniformly.
 
 The implementation uses standard cubical-complex identities:
 
-- \(B_0\) is the number of connected components of the present cubical
+- $B_0$ is the number of connected components of the present cubical
   1-skeleton, computed by union-find on vertices and edges.
-- \(B_2\) is the number of bounded connected components of the complement,
+- $B_2$ is the number of bounded connected components of the complement,
   computed by a dual cubical graph with one distinguished exterior component.
-- \(B_1\) is obtained exactly from
+- $B_1$ is obtained exactly from
 
-\[
+$$
 B_1=B_0+B_2-\chi.
-\]
+$$
 
 The returned tensors are checked for nonnegative Betti numbers and the exact
 Euler--Poincare identity
 
-\[
+$$
 \chi=B_0-B_1+B_2.
-\]
+$$
 
 ## 2. Frame-invariant directional filtration for binary volumes
 
-For a binary foreground \(B\) inside an ROI and a selected unit coordinate
-direction \(d\in\{e_x,e_y,e_z\}\), the package constructs
+For a binary foreground $B$ inside an ROI and a selected unit coordinate
+direction $d\in\{e_x,e_y,e_z\}$, the package constructs
 
-\[
+$$
 F_d(x)=(C_d(x),A_d(x),S(x)).
-\]
+$$
 
 The three coordinates describe different local geometric properties.
 
 ### Cone occupancy deficit
 
-Let \(\Gamma_d(x)\) be a symmetric double cone centered at the voxel \(x\),
-with axial half-extent \(H\) and radius \(R_c\). The occupancy coordinate is
+Let $\Gamma_d(x)$ be a symmetric double cone centered at the voxel $x$,
+with axial half-extent $H$ and radius $R_c$. The occupancy coordinate is
 
-\[
+$$
 C_d(x)
 =
 1-
 \frac{|\Gamma_d(x)\cap B|}{|\Gamma_d(x)\cap \mathrm{ROI}|}.
-\]
+$$
 
-Thus small \(C_d\) means that the directional cone is strongly occupied by
+Thus small $C_d$ means that the directional cone is strongly occupied by
 foreground voxels. The cone is clipped at the ROI boundary.
 
 ### Local covariance
 
-Nearby foreground voxel centers are expressed relative to \(x\) and assigned
-nonnegative weights \(w_x(y)\). The weighted centroid and covariance are
+Nearby foreground voxel centers are expressed relative to $x$ and assigned
+nonnegative weights $w_x(y)$. The weighted centroid and covariance are
 
-\[
+$$
 \mu_x=
 \frac{1}{W_x}\sum_y w_x(y)r_{xy},
 \qquad
 W_x=\sum_y w_x(y),
-\]
+$$
 
 and
 
-\[
+$$
 \Sigma_x=
 \frac{1}{W_x}
 \sum_y
 w_x(y)(r_{xy}-\mu_x)(r_{xy}-\mu_x)^{\mathsf T}.
-\]
+$$
 
 Two neighborhood kernels are available:
 
 - `hard`: equal weight inside a sphere of radius `covariance_radius`;
 - `gaussian`: radial Gaussian weight. If `covariance_sigma` is omitted,
-  \(\sigma=R/\sqrt5\), matching the radial second moment of a uniform 3-D ball
-  of radius \(R\). The Gaussian is truncated at `truncate_sigma * sigma`.
+  $\sigma=R/\sqrt5$, matching the radial second moment of a uniform 3-D ball
+  of radius $R$. The Gaussian is truncated at `truncate_sigma * sigma`.
 
 ### Directional covariance deficit
 
-For a unit direction \(d\),
+For a unit direction $d$,
 
-\[
+$$
 A_d(x)
 =
 1-
@@ -165,59 +165,59 @@ A_d(x)
 \frac{d^{\mathsf T}\Sigma_xd}
 {\operatorname{tr}\Sigma_x}
 }.
-\]
+$$
 
-Small \(A_d\) means that a large fraction of the local covariance is aligned
-with \(d\). If \(\Sigma_x=\lambda vv^{\mathsf T}\) is rank one, then
+Small $A_d$ means that a large fraction of the local covariance is aligned
+with $d$. If $\Sigma_x=\lambda vv^{\mathsf T}$ is rank one, then
 
-\[
+$$
 A_d(x)=1-|v^{\mathsf T}d|.
-\]
+$$
 
 ### Principal-axis degeneracy
 
 Let
 
-\[
+$$
 \lambda_1\ge\lambda_2\ge\lambda_3\ge0
-\]
+$$
 
-be the eigenvalues of \(\Sigma_x\). Define
+be the eigenvalues of $\Sigma_x$. Define
 
-\[
+$$
 S(x)=\frac{\lambda_2}{\lambda_1}.
-\]
+$$
 
 Values near zero indicate one strongly dominant covariance direction. Values
 near one indicate that the two largest covariance directions are similar, so a
 unique principal axis is less well defined.
 
 If the local weighted covariance is degenerate, the implementation assigns
-\(A_d=S=1\).
+$A_d=S=1$.
 
 ### Frame invariance
 
-If an orthogonal transformation \(Q\) fixes the selected physical direction,
-\(Qd=d\), and the same physical neighborhood is expressed as
+If an orthogonal transformation $Q$ fixes the selected physical direction,
+$Qd=d$, and the same physical neighborhood is expressed as
 
-\[
+$$
 r'_{xy}=Qr_{xy},
 \qquad
 \Sigma'_x=Q\Sigma_xQ^{\mathsf T},
-\]
+$$
 
 then
 
-\[
+$$
 C'_d=C_d,
 \qquad
 A'_d=A_d,
 \qquad
 S'=S.
-\]
+$$
 
 Therefore the filtration does not depend on how an orthonormal basis is chosen
-inside the transverse plane \(d^\perp\). This is a coordinate-frame statement;
+inside the transverse plane $d^\perp$. This is a coordinate-frame statement;
 it does not claim invariance to rotating and resampling a discrete voxel image.
 
 ### Usage
