@@ -163,7 +163,7 @@ A_d(x)
 1-
 \sqrt{
 \frac{d^{\mathsf T}\Sigma_xd}
-{\operatorname{tr}\Sigma_x}
+{\mathrm{tr}\Sigma_x}
 }.
 ```
 
