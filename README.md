@@ -33,9 +33,9 @@ pip install "directional-betti[io]"
 
 Let each top-dimensional voxel cube have a three-parameter filtration value
 
-$$
+```math
 F(x)=(F_1(x),F_2(x),F_3(x)).
-$$
+```
 
 For a threshold vector $t=(t_1,t_2,t_3)$, a top cube is present when
 $F_j(x)\le t_j$ for all three coordinates. Every lower-dimensional cubical
@@ -45,9 +45,9 @@ incident top cube enters.
 
 For every sampled threshold triple the package computes
 
-$$
+```math
 B_q(t)=\dim H_q(K_t;\mathbb F_2),\qquad q=0,1,2,
-$$
+```
 
 and the Euler characteristic $\chi(t)$.
 
@@ -88,25 +88,25 @@ The implementation uses standard cubical-complex identities:
   computed by a dual cubical graph with one distinguished exterior component.
 - $B_1$ is obtained exactly from
 
-$$
+```math
 B_1=B_0+B_2-\chi.
-$$
+```
 
 The returned tensors are checked for nonnegative Betti numbers and the exact
 Euler--Poincare identity
 
-$$
+```math
 \chi=B_0-B_1+B_2.
-$$
+```
 
 ## 2. Frame-invariant directional filtration for binary volumes
 
 For a binary foreground $B$ inside an ROI and a selected unit coordinate
 direction $d\in\{e_x,e_y,e_z\}$, the package constructs
 
-$$
+```math
 F_d(x)=(C_d(x),A_d(x),S(x)).
-$$
+```
 
 The three coordinates describe different local geometric properties.
 
@@ -115,12 +115,12 @@ The three coordinates describe different local geometric properties.
 Let $\Gamma_d(x)$ be a symmetric double cone centered at the voxel $x$,
 with axial half-extent $H$ and radius $R_c$. The occupancy coordinate is
 
-$$
+```math
 C_d(x)
 =
 1-
 \frac{|\Gamma_d(x)\cap B|}{|\Gamma_d(x)\cap \mathrm{ROI}|}.
-$$
+```
 
 Thus small $C_d$ means that the directional cone is strongly occupied by
 foreground voxels. The cone is clipped at the ROI boundary.
@@ -130,21 +130,21 @@ foreground voxels. The cone is clipped at the ROI boundary.
 Nearby foreground voxel centers are expressed relative to $x$ and assigned
 nonnegative weights $w_x(y)$. The weighted centroid and covariance are
 
-$$
+```math
 \mu_x=
 \frac{1}{W_x}\sum_y w_x(y)r_{xy},
 \qquad
 W_x=\sum_y w_x(y),
-$$
+```
 
 and
 
-$$
+```math
 \Sigma_x=
 \frac{1}{W_x}
 \sum_y
 w_x(y)(r_{xy}-\mu_x)(r_{xy}-\mu_x)^{\mathsf T}.
-$$
+```
 
 Two neighborhood kernels are available:
 
@@ -157,7 +157,7 @@ Two neighborhood kernels are available:
 
 For a unit direction $d$,
 
-$$
+```math
 A_d(x)
 =
 1-
@@ -165,28 +165,28 @@ A_d(x)
 \frac{d^{\mathsf T}\Sigma_xd}
 {\operatorname{tr}\Sigma_x}
 }.
-$$
+```
 
 Small $A_d$ means that a large fraction of the local covariance is aligned
 with $d$. If $\Sigma_x=\lambda vv^{\mathsf T}$ is rank one, then
 
-$$
+```math
 A_d(x)=1-|v^{\mathsf T}d|.
-$$
+```
 
 ### Principal-axis degeneracy
 
 Let
 
-$$
+```math
 \lambda_1\ge\lambda_2\ge\lambda_3\ge0
-$$
+```
 
 be the eigenvalues of $\Sigma_x$. Define
 
-$$
+```math
 S(x)=\frac{\lambda_2}{\lambda_1}.
-$$
+```
 
 Values near zero indicate one strongly dominant covariance direction. Values
 near one indicate that the two largest covariance directions are similar, so a
@@ -200,21 +200,21 @@ $A_d=S=1$.
 If an orthogonal transformation $Q$ fixes the selected physical direction,
 $Qd=d$, and the same physical neighborhood is expressed as
 
-$$
+```math
 r'_{xy}=Qr_{xy},
 \qquad
 \Sigma'_x=Q\Sigma_xQ^{\mathsf T},
-$$
+```
 
 then
 
-$$
+```math
 C'_d=C_d,
 \qquad
 A'_d=A_d,
 \qquad
 S'=S.
-$$
+```
 
 Therefore the filtration does not depend on how an orthonormal basis is chosen
 inside the transverse plane $d^\perp$. This is a coordinate-frame statement;
