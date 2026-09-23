@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "directional-betti"
+version = "1.0.0"
+description = "Exact sampled directional cubical Betti tensors for 3-D voxel data"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "numba>=0.59",
+]
+
+[project.optional-dependencies]
+io = ["tifffile>=2023.0"]
+
+[project.scripts]
+directional-betti = "directional_betti.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
