@@ -19,7 +19,7 @@ connectivity sweeps.
 ## Installation
 
 ```bash
-pip install directional_betti-1.0.0-py3-none-any.whl
+pip install .
 ```
 
 Core dependencies are NumPy and Numba. TIFF input for the command-line
@@ -74,9 +74,15 @@ print(result.b2[-1, -1, -1])
 An optional Boolean or nonzero-valued ROI can be supplied with shape
 `(X, Y, Z)`. Top cubes outside the ROI are absent from the cubical complex.
 
-The sampled grid uses `steps[j] + 1` thresholds on axis `j`. For each axis,
-the minimum and maximum are taken over the valid top-cube filtration values and
-the interval is divided uniformly.
+The sampled grid uses `steps[j] + 1` cumulative bin indices on axis `j`.
+For each axis, the minimum `m` and maximum `M` are taken over the valid
+top-cube filtration values and `delta = (M - m) / steps[j]`.
+For a nonconstant coordinate, the bin of value `f` is
+`floor((f - m) / delta)`. Index `a < steps[j]` therefore includes values
+strictly below `m + (a + 1) * delta`; the terminal index includes the maximum.
+These are not sublevel evaluations at the lower bin edges. A constant
+coordinate is assigned bin zero throughout. Bounds are determined separately
+for each input, so equal indices across specimens denote relative levels.
 
 ### Exact topology computation
 
@@ -298,3 +304,20 @@ src/directional_betti/
 ```
 
 The two scripts under `examples/` reproduce the two public use cases above.
+
+## Independent correctness checks
+
+```bash
+pip install -e ".[test]"
+python -m pytest -q
+```
+
+The tests explicitly enumerate cubical cells and reduce boundary matrices over
+`F_2`, independently of the production union-find, dual graph, and Euler
+reconstruction. They compare every sampled entry on deterministic random
+multifiltrations, exercise unequal grid shapes and irregular ROIs, and check
+known disconnected, tunnel, and cavity geometries. An additional example
+checks a shared face entering before either incident cube. Quarter turns
+about each cardinal axis check transverse invariance with both covariance
+kernels. These synthetic checks do not reproduce the manuscript's cohort
+prediction or mechanical results.

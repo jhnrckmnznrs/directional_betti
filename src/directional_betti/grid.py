@@ -1,8 +1,9 @@
 """Regular discretization of three-parameter voxel filtrations.
 
-Each filtration coordinate is sampled on ``steps + 1`` threshold values.
-Grid bounds are determined by the minimum and maximum filtration values on
-valid top-dimensional cubes.
+Each filtration coordinate is quantized into cumulative bins indexed from
+zero through ``steps``. For a nonconstant coordinate, index ``a < steps``
+includes values strictly below the upper bin edge, not values at or below
+the lower edge. Grid bounds come from valid top-dimensional cubes.
 """
 from __future__ import annotations
 
