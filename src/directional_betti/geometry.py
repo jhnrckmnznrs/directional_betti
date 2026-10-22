@@ -54,10 +54,10 @@ def make_sphere_offsets(radius: float, spacing: float) -> np.ndarray:
     """Integer offsets whose physical Euclidean distance is at most ``radius``."""
     radius = float(radius)
     spacing = float(spacing)
-    if radius < 0.0:
-        raise ValueError("radius must be non-negative")
-    if spacing <= 0.0:
-        raise ValueError("spacing must be positive")
+    if not np.isfinite(radius) or radius < 0.0:
+        raise ValueError("radius must be finite and non-negative")
+    if not np.isfinite(spacing) or spacing <= 0.0:
+        raise ValueError("spacing must be finite and positive")
 
     max_off = int(np.floor(radius / spacing))
     radius2 = radius * radius
@@ -81,10 +81,12 @@ def make_cone_offsets(
     radius = float(radius)
     half_extent = float(abs(half_extent))
     spacing = float(spacing)
-    if radius < 0.0:
-        raise ValueError("cone radius must be non-negative")
-    if spacing <= 0.0:
-        raise ValueError("spacing must be positive")
+    if not np.isfinite(radius) or radius < 0.0:
+        raise ValueError("cone radius must be finite and non-negative")
+    if not np.isfinite(half_extent):
+        raise ValueError("cone half extent must be finite")
+    if not np.isfinite(spacing) or spacing <= 0.0:
+        raise ValueError("spacing must be finite and positive")
     if half_extent == 0.0:
         return np.zeros((0, 3), dtype=np.int16), np.zeros(0, dtype=np.float64)
 
@@ -109,8 +111,8 @@ def make_cone_offsets(
 def matched_gaussian_sigma(radius: float) -> float:
     """Gaussian sigma with the same radial second moment as a uniform 3-D ball."""
     radius = float(radius)
-    if radius <= 0.0:
-        raise ValueError("radius must be positive")
+    if not np.isfinite(radius) or radius <= 0.0:
+        raise ValueError("radius must be finite and positive")
     return radius / np.sqrt(5.0)
 
 
@@ -123,12 +125,12 @@ def make_gaussian_offsets(
     sigma = float(sigma)
     spacing = float(spacing)
     truncate_sigma = float(truncate_sigma)
-    if sigma <= 0.0:
-        raise ValueError("sigma must be positive")
-    if spacing <= 0.0:
-        raise ValueError("spacing must be positive")
-    if truncate_sigma < 2.0:
-        raise ValueError("truncate_sigma must be >= 2")
+    if not np.isfinite(sigma) or sigma <= 0.0:
+        raise ValueError("sigma must be finite and positive")
+    if not np.isfinite(spacing) or spacing <= 0.0:
+        raise ValueError("spacing must be finite and positive")
+    if not np.isfinite(truncate_sigma) or truncate_sigma < 2.0:
+        raise ValueError("truncate_sigma must be finite and >= 2")
 
     cutoff = truncate_sigma * sigma
     max_off = int(np.floor(cutoff / spacing))

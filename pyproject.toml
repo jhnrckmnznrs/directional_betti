@@ -15,6 +15,10 @@ dependencies = [
 
 [project.optional-dependencies]
 io = ["tifffile>=2023.0"]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [project.scripts]
 directional-betti = "directional_betti.cli:main"

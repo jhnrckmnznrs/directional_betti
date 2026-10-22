@@ -69,7 +69,10 @@ def cubical_betti_tensors(
         cubical domain. If omitted, every top cube belongs to the domain.
     grid_steps:
         Number of equal intervals on each filtration axis. ``(8, 8, 8)``
-        produces a ``9 x 9 x 9`` sampled threshold lattice.
+        produces a ``9 x 9 x 9`` cumulative bin lattice. For a nonconstant
+        coordinate, bin ``a < steps`` includes values strictly below its
+        upper edge; the terminal bin includes the maximum. Bounds are
+        estimated separately for each input.
     """
     b0, b1, b2, chi, spec = directional_betti_tensors(
         filtration,
@@ -119,14 +122,14 @@ def frame_invariant_directional_betti(
         raise ValueError("roi is empty")
 
     spacing = float(spacing)
-    if spacing <= 0.0:
-        raise ValueError("spacing must be positive")
-    if float(covariance_radius) <= 0.0:
-        raise ValueError("covariance_radius must be positive")
-    if float(cone_radius) < 0.0:
-        raise ValueError("cone_radius must be non-negative")
-    if float(cone_half_extent) <= 0.0:
-        raise ValueError("cone_half_extent must be positive")
+    if not np.isfinite(spacing) or spacing <= 0.0:
+        raise ValueError("spacing must be finite and positive")
+    if not np.isfinite(covariance_radius) or float(covariance_radius) <= 0.0:
+        raise ValueError("covariance_radius must be finite and positive")
+    if not np.isfinite(cone_radius) or float(cone_radius) < 0.0:
+        raise ValueError("cone_radius must be finite and non-negative")
+    if not np.isfinite(cone_half_extent) or float(cone_half_extent) <= 0.0:
+        raise ValueError("cone_half_extent must be finite and positive")
 
     dirs = tuple(str(d).lower() for d in directions)
     if not dirs or any(d not in {"x", "y", "z"} for d in dirs):
@@ -135,7 +138,8 @@ def frame_invariant_directional_betti(
         raise ValueError("directions must not contain duplicates")
 
     steps = tuple(int(v) for v in grid_steps)
-    if len(steps) != 3 or any(v <= 0 for v in steps):
+    if (len(steps) != 3 or any(v <= 0 for v in steps)
+            or any(int(v) != v for v in grid_steps)):
         raise ValueError("grid_steps must contain three positive integers")
 
     foreground_ids = foreground_linear_ids(fg, roi_u8)
